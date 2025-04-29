@@ -5,7 +5,7 @@ import userModel from "../models/userModel.js";
 
 export const getUsers = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.auth.userId;
     const filterUsers = await userModel
       .find({ _id: { $ne: userId } })
       .select(-"password");
@@ -20,7 +20,7 @@ export const getUsers = async (req, res) => {
 export const getMessages = async (req, res) => {
   try {
     const { id: userToChatId } = req.params;
-    const myId = req.user._id;
+    const myId = req.auth.userId;
     const messages = await messageModel.find({
       $or: [
         { senderId: myId, receiverId: userToChatId },
@@ -38,7 +38,7 @@ export const sendMessage = async (req, res) => {
   try {
     const { id: receiverId } = req.params;
     const { text, image } = req.body;
-    const senderId = req.user._id;
+    const senderId = req.auth.userId;
     let imageUrl;
     if (image) {
       const uploadUrl = await cloudinary.uploader.upload(image);

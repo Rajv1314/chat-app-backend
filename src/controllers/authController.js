@@ -50,8 +50,8 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(404).json({ error: "Invalid Credentials !!" });
     }
-    generateToken(user._id, res);
-    return res.status(200).json({ message: "  Login successful ",data:user });
+     let token =  generateToken(user._id, res);
+    return res.status(200).json({ message: "  Login successful ",token:token,data:user });
   } catch (error) {
     console.log("error ", error.message);
     return res.status(500).json({ error: "Server Error !" });
@@ -71,7 +71,7 @@ export const logout = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { profilPic } = req.body;
-    const userId = req.user._id;
+    const {userId} =   req.auth;
     if (!profilPic) {
       return res.status(400).json({ error: "profilPic not found  !" });
     }
@@ -87,9 +87,10 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-export const getUserInfo = (req, res) => {
+export const getUserInfo = async(req, res) => {
   try {
-    res.status(200).json(req.user);
+  let data = await userModel.findById({_id:req.auth.userId})
+    res.status(200).json(data);
   } catch (error) {
     console.log("error ", error.message);
     return res.status(500).json({ error: "Server Error !" });
