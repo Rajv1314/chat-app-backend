@@ -21,11 +21,11 @@ export const signup = async (req, res) => {
         password: hashedPassword,
       });
       if (newuser) {
-        generateToken(newuser._id, res);
+     let token =   generateToken(newuser._id, res);
         await newuser.save();
         return res
           .status(201)
-          .json({ message: " User registration successful ",data:newuser });
+          .json({ message: " User registration successful ",token:token,data:newuser });
       } else {
         return res.status(400).json({ error: "Invalide User Data " });
       }
